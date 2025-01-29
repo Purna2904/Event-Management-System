@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager</title>
+    <link rel="stylesheet" href="1style.css">
+</head>
+<body>
+    <h1>Event Manager</h1>
+    <form id="event-form">
+        <input type="text" id="description" placeholder="Event Description" required>
+        <input type="datetime-local" id="start-time" required>
+        <input type="datetime-local" id="end-time" required>
+        <button type="submit">Add Event</button>
+    </form>
+    <div id="events"></div>
+    <div class="related-content">
+        <h2>Related Content</h2>
+        <p>Here you can add any related information or tips for managing events effectively.</p>
+    </div>
+    <script>
+        document.getElementById('event-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const description = document.getElementById('description').value;
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
+
+            const newEvent = { description, startTime, endTime };
+
+            const eventsDiv = document.getElementById('events');
+            const eventElements = eventsDiv.children;
+
+            let conflict = false;
+            for (const eventElement of eventElements) {
+                const eventStartTime = new Date(eventElement.dataset.startTime);
+                const eventEndTime = new Date(eventElement.dataset.endTime);
+
+                if (new Date(startTime) < eventEndTime && new Date(endTime) > eventStartTime) {
+                    conflict = true;
+                    break;
+                }
+            }
+
+            if (conflict) {
+                alert('Conflict detected! Please choose a different time slot.');
+            } else {
+                const eventDiv = document.createElement('div');
+                eventDiv.className = 'event-box';
+                eventDiv.dataset.startTime = startTime;
+                eventDiv.dataset.endTime = endTime;
+                eventDiv.innerHTML = `<strong>${description}</strong><br>${new Date(startTime).toLocaleString()} - ${new Date(endTime).toLocaleString()}`;
+                eventsDiv.appendChild(eventDiv);
+                alert('Event added successfully!');
+            }
+        });
+    </script>
+</body>
+</html>
